@@ -109,6 +109,8 @@ degrees = 0
 old_degrees = degrees
 button_down = False
 
+dirty = False
+
 try:
     while True:
         try:
@@ -119,6 +121,7 @@ try:
                 if grovepi.digitalRead(button):
                     if not button_down:
                         wid.click()
+                        dirty = True
                     button_down = True
                 else:
                     button_down = False
@@ -131,9 +134,9 @@ try:
                 # Calculate rotation in degrees (0 to 300)
                 degrees = round((voltage * full_angle) / grove_vcc, 2)
                 wid.dial(degrees)
+                dirty = dirty or wid.is_dirty()
 
-
-                if is_on is MY_DISPLAY_OFF or wid.is_dirty():
+                if is_on is MY_DISPLAY_OFF or dirty:
                     #refresh the display
                     wid.refresh()
                     dirty = False
